@@ -26,9 +26,8 @@ public class Main implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		userRepository.deleteAll();
 
-		userRepository.save(new User("Alice", "Smith", passwordEncoder.encode("password1"), new String[]{"doctor"}) );
-		userRepository.save(new User("Bob", "Smith", passwordEncoder.encode("password2"), new String[]{"admin"}));
-		userRepository.save(new User("John", "Connor", passwordEncoder.encode("password3"), new String[]{"police"}) );
+		userRepository.save(new User("user", passwordEncoder.encode("user"), new String[]{"user"}) );
+		userRepository.save(new User("admin", passwordEncoder.encode("admin"), new String[]{"admin", "user"}));
 
 		System.out.println("Users found with findAll():");
 		System.out.println("-------------------------------");

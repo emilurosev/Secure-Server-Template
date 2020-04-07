@@ -28,11 +28,17 @@ public class User {
 		this.roles = Arrays.asList(roles);
 	}
 	
+	public User(String username, String password, String[] roles) {
+		this.username = username;
+		this.password = password;
+		this.roles = Arrays.asList(roles);
+	}
+	
 	@Override
 	public String toString() {
 	    return String.format(
-	        "Customer[id=%s, firstName='%s', lastName='%s']",
-	        id, firstName, lastName);
+	        "User[id=%s, firstName='%s', lastName='%s', username='%s']",
+	        id, firstName, lastName, username);
 	}
 
 	public String getId() {

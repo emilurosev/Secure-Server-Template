@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HelloController {
+public class HomeController {
 
 	@GetMapping("/")
 	public String index() {
@@ -19,7 +19,7 @@ public class HelloController {
 	}
 
 	@GetMapping("/user")
-	@Secured({"ROLE_DOCTOR", "ROLE_POLICE", "ROLE_ADMIN"})
+	@Secured("ROLE_USER")
 	public HashMap<String, Object> getUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		HashMap<String, Object> hashMap = new HashMap<>();
@@ -28,17 +28,10 @@ public class HelloController {
 		return hashMap;
 	}
 
-	@GetMapping("/doctor")
-	@Secured({ "ROLE_DOCTOR", "ROLE_ADMIN" })
-	public ResponseEntity<String> getDoctorPage() {
-		return new ResponseEntity<String>("<h1>Only doctor</h1>", HttpStatus.OK);
-	}
-
-	@GetMapping("/police")
-	@Secured({ "ROLE_POLICE", "ROLE_ADMIN" })
+	@GetMapping("/admin")
+	@Secured("ROLE_ADMIN")
 	public ResponseEntity<String> getPolicePage() {
-		return new ResponseEntity<String>("<h1>Only police</h1>", HttpStatus.OK);
+		return new ResponseEntity<String>("<h1>Only admin</h1>", HttpStatus.OK);
 	}
-	
 
 }
