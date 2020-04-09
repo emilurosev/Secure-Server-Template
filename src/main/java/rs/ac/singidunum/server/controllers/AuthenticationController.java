@@ -1,10 +1,15 @@
 package rs.ac.singidunum.server.controllers;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,8 +43,14 @@ public class AuthenticationController {
 		}	
 		final UserDetails userDetails = myUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 		final String jwt = jwtUtil.generateToken(userDetails);
+		final Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+		final String username = userDetails.getUsername();
+		List<Object> response = new ArrayList<>();
+		response.add(jwt);
+		response.add(authorities);
+		response.add(username);
 		
-		return ResponseEntity.ok(new AuthenticationResponse(jwt));
+		return ResponseEntity.ok(new AuthenticationResponse(jwt, username, authorities));
 	}
 	
 }
