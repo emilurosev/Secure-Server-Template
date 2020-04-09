@@ -38,12 +38,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.csrf().disable()
 			.authorizeRequests()
 			.antMatchers("/admin").hasRole("ADMIN")
-			.antMatchers("/user").hasRole("USER")
+			.antMatchers("/register").hasRole("ADMIN")
+			.antMatchers("/user").hasAnyRole("USER", "ADMIN")
+			.antMatchers("/books").hasAnyRole("USER", "ADMIN")
+			.antMatchers("/exportbooks").hasAnyRole("USER", "ADMIN")
+			.antMatchers("/importbooks").hasAnyRole("USER", "ADMIN")
 			.antMatchers("/auth").permitAll()
-			.antMatchers("/").permitAll()
+			.antMatchers("/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //Dont create sessions
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		http.cors();
 	}

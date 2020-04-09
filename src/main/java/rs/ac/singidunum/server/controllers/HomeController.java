@@ -32,8 +32,8 @@ public class HomeController {
 
 	@GetMapping("/admin")
 	@Secured("ROLE_ADMIN")
-	public ResponseEntity<String> getPolicePage() {
-		return new ResponseEntity<String>("<h1>Only admin</h1>", HttpStatus.OK);
+	public ResponseEntity<String> getAdminPage() {
+		return new ResponseEntity<String>("Only admin", HttpStatus.OK);
 	}
 
 }
