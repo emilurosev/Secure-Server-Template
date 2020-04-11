@@ -38,18 +38,22 @@ public class BookExportService {
 		return workbook;
 	}
 
-	private void writeBook(Book book, Row row) {
-		Cell cell = row.createCell(1);
+	private void writeBook(Book book, Row row, Workbook workbook) {
+		Cell cell = row.createCell(0);
 		cell.setCellValue(book.getTitle());
 
-		cell = row.createCell(2);
+		cell = row.createCell(1);
 		cell.setCellValue(book.getAuthor());
 
-		cell = row.createCell(3);
+		cell = row.createCell(2);
 		cell.setCellValue(book.getPrice());
 
-		cell = row.createCell(4);
-		cell.setCellValue(book.getPublicationDate());
+		Cell dateCell = row.createCell(3);
+		CellStyle cellStyle = workbook.createCellStyle();
+		cellStyle.setDataFormat((short) 14);
+		dateCell.setCellValue(book.getPublicationDate());
+		dateCell.setCellStyle(cellStyle);
+
 	}
 
 	private void createHeaderRow(Sheet sheet) {
@@ -61,20 +65,20 @@ public class BookExportService {
 		cellStyle.setFont(font);
 
 		Row row = sheet.createRow(0);
-		Cell cellTitle = row.createCell(1);
+		Cell cellTitle = row.createCell(0);
 
 		cellTitle.setCellStyle(cellStyle);
 		cellTitle.setCellValue("Title");
 
-		Cell cellAuthor = row.createCell(2);
+		Cell cellAuthor = row.createCell(1);
 		cellAuthor.setCellStyle(cellStyle);
 		cellAuthor.setCellValue("Author");
 
-		Cell cellPrice = row.createCell(3);
+		Cell cellPrice = row.createCell(2);
 		cellPrice.setCellStyle(cellStyle);
 		cellPrice.setCellValue("Price");
 
-		Cell cellPublicationDate = row.createCell(4);
+		Cell cellPublicationDate = row.createCell(3);
 		cellPublicationDate.setCellStyle(cellStyle);
 		cellPublicationDate.setCellValue("Publication date");
 	}
@@ -83,14 +87,14 @@ public class BookExportService {
 		Workbook workbook = getWorkbook(excelFilePath);
 
 		Sheet sheet = workbook.createSheet();
-		
+
 		createHeaderRow(sheet);
 
 		int rowCount = 0;
 
-		for (Book aBook : listBook) {
+		for (Book book : listBook) {
 			Row row = sheet.createRow(++rowCount);
-			writeBook(aBook, row);
+			writeBook(book, row, workbook);
 		}
 
 		try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
@@ -98,15 +102,12 @@ public class BookExportService {
 		}
 	}
 
-	public void export() {
+	public void export() throws IOException {
 		List<Book> listBook = bookRepository.findAll();
-		String excelFilePath = "ExportedBooks.xls";
-		try {
-			writeExcel(listBook, excelFilePath);
-			System.out.println("Exported");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		String excelFilePath = "ExportedBooks.xlsx";
+
+		writeExcel(listBook, excelFilePath);
+		System.out.println("Exported");
 
 	}
 

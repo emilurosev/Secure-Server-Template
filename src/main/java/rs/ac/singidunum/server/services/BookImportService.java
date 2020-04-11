@@ -2,13 +2,15 @@ package rs.ac.singidunum.server.services;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -54,49 +56,45 @@ public class BookImportService {
 		return workbook;
 	}
 
-	public void readBooksFromExcelFile(String excelFilePath) {
-		try {
-			FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+	public void readBooksFromExcelFile(String excelFilePath) throws IOException {
 
-			Workbook workbook = getWorkbook(inputStream, excelFilePath);
-			Sheet firstSheet = workbook.getSheetAt(0);
-			Iterator<Row> iterator = firstSheet.iterator();
-			iterator.next();
+		FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
 
-			while (iterator.hasNext()) {
-				Row nextRow = iterator.next();
-				Iterator<Cell> cellIterator = nextRow.cellIterator();
-				Book book = new Book();
-				while (cellIterator.hasNext()) {
-					Cell nextCell = cellIterator.next();
-					int columnIndex = nextCell.getColumnIndex();
+		Workbook workbook = getWorkbook(inputStream, excelFilePath);
+		Sheet firstSheet = workbook.getSheetAt(0);
+		Iterator<Row> iterator = firstSheet.iterator();
+		iterator.next();
 
-					switch (columnIndex) {
-					case 1:
-						book.setTitle((String) getCellValue(nextCell));
-						break;
-					case 2:
-						book.setAuthor((String) getCellValue(nextCell));
-						break;
-					case 3:
-						book.setPrice((double) getCellValue(nextCell));
-						break;
-					case 4:
-						book.setPublicationDate(null);
-						break;
-
-					}
+		while (iterator.hasNext()) {
+			Row nextRow = iterator.next();
+			Iterator<Cell> cellIterator = nextRow.cellIterator();
+			Book book = new Book();
+			while (cellIterator.hasNext()) {
+				Cell nextCell = cellIterator.next();
+				int columnIndex = nextCell.getColumnIndex();
+				switch (columnIndex) {
+				case 0:
+					book.setTitle((String) getCellValue(nextCell));
+					break;
+				case 1:
+					book.setAuthor((String) getCellValue(nextCell));
+					break;
+				case 2:
+					book.setPrice((double) getCellValue(nextCell));
+					break;
+				case 3:
+					Date date = DateUtil.getJavaDate((double) getCellValue(nextCell));
+					book.setPublicationDate(date);
+					break;
 
 				}
-				bookRepository.save(book);
+
 			}
-
-			workbook.close();
-			inputStream.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+			bookRepository.save(book);
 		}
+
+		workbook.close();
+		inputStream.close();
 
 	}
 

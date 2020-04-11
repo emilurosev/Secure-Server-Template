@@ -1,5 +1,7 @@
 package rs.ac.singidunum.server.controllers;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,7 @@ public class BookExportController {
 	
 	@GetMapping("/exportbooks")
 	@Secured({"ROLE_USER", "ROLE_ADMIN"})
-	public ResponseEntity<String> export() {
+	public ResponseEntity<String> export() throws IOException {
 		bookExportService.export();
 		return new ResponseEntity<String>("Exported", HttpStatus.OK);
 	}
